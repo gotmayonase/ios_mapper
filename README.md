@@ -1,0 +1,1 @@
+[![Build Status](https://secure.travis-ci.org/gotmayonase/ios_mapper.png)](http://travis-ci.org/gotmayonase/ios_mapper)
