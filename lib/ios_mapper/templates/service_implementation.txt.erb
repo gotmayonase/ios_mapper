@@ -1,0 +1,53 @@
+//
+//  <%= @klass %>Service.m
+//
+//  Created by <%= @user_name %> on <%= Date.today.strftime('%m/%d/%Y') %>.
+//  Copyright (c) <%= Time.now.year %> Twin Engine Labs. All rights reserved.
+//
+
+#import "<%= @klass %>Service.h"
+#import "<%= @klass %>.h"
+#import "RestKit.h"
+
+@implementation <%= @klass %>Service
+
+@synthesize delegate;
+
+- (void)dealloc {
+  self.delegate = nil;
+  [super dealloc];
+}
+
+- (void)fetch<%= @klass.to_s.pluralize %>WithRoute:(NSString *)route {
+  RKObjectManager *man = [RKObjectManager sharedManager];
+  RKObjectMapping *map = [<%= @klass %> objectMapping];
+  map.rootKeyPath = @"<%= @klass.to_s.downcase %>";
+  [man loadObjectsAtResourcePath:route objectMapping:map delegate:self];
+}
+
+#pragma mark - RKObjectLoaderDelegate methods
+
+- (void)objectLoader:(RKObjectLoader *)objectLoader didLoadObjects:(NSArray *)objects {
+  if (objects.count > 0) {
+    id o = [objects objectAtIndex:0];
+    if ([o isKindOfClass:[<%= @klass %> class]]) {
+      if (delegate && [delegate respondsToSelector:@selector(<%= @klass %>Service:didFetch<%= @klass.to_s.pluralize %>:)]) {
+        [delegate <%= @klass %>Service:self didFetch<%= @klass.to_s.pluralize %>:objects];
+      }
+    }
+  } else {
+    if (delegate && [delegate respondsToSelector:@selector(fetchedZero<%= @klass.to_s.pluralize %>With<%= @klass %>Service:)]) {
+      [delegate fetchedZero<%= @klass.to_s.pluralize %>With<%= @klass %>Service:self];
+    }
+  }
+}
+
+- (void)objectLoader:(RKObjectLoader *)objectLoader didFailWithError:(NSError *)error {
+  [[[[UIAlertView alloc] initWithTitle:@"Error" message:@"We were unable to fetch the <%= @klass.to_s.downcase.pluralize %> for you. The admins have been notified of this error." delegate:nil cancelButtonTitle:@"OK" otherButtonTitles:nil] autorelease] show];
+}
+
++ (<%= @klass %>Service *)service {
+  return [[[[self class] alloc] init] autorelease];
+}
+
+@end

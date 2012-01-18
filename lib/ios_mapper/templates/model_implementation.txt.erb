@@ -1,0 +1,43 @@
+//
+//  <%= @klass %>.m
+//  
+//
+//  Created by <%= @user_name %> on <%= Date.today.strftime('%m/%d/%Y') %>.
+//  Copyright (c) <%= Time.now.year %> Twin Engine Labs. All rights reserved.
+//
+
+#import "<%= @klass %>.h"
+
+@implementation <%= @klass %>
+
+@synthesize <%= @properties.map(&:synthesize_name).join(', ') %>;
+
+- (void)dealloc {
+<% @properties.each do |property| %>
+  <%= property.to_dealloc_line %> 
+<% end %>
+ [super dealloc]; 
+}
+
++ (RKObjectMapping *)objectMapping {
+  RKObjectMapping *map = [RKObjectMapping mappingForClass:[self class]];
+  [map mapAttributes:<%= @properties.map(&:to_mapping_key).compact.join(', ')%>, nil];
+  
+<% @associations.each do |a| %>
+  <%= a.to_mapping %>
+<% end %>
+
+  map.rootKeyPath = @"<%= @klass.to_s.downcase %>";
+  return map;
+}
+
+- (RKObjectMapping *)serializationMapping {
+  RKObjectMapping *map = [[self objectMapping] inverseMapping];
+  
+
+  map.rootKeyPath = @"<%= @klass.to_s.downcase %>";
+  
+  return map;
+}
+
+@end

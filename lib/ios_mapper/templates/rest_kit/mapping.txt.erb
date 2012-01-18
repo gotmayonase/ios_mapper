@@ -1,0 +1,2 @@
+RKObjectRelationshipMapping *<%= variable_name %>Map = [RKObjectRelationshipMapping mappingFromKeyPath:@"<%= variable_name %>" toKeyPath:@"<%= variable_name %>" withMapping:[<%= @association.class_name %> objectMapping]];
+[map addRelationshipMapping:<%= variable_name %>Map];

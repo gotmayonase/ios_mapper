@@ -1,0 +1,32 @@
+#!/usr/bin/env ruby
+
+require "optparse"
+require "pp"
+
+if ARGV.empty?
+  STDERR.puts "You need to provide a Project Name"
+  STDERR.puts "USAGE: ios_mapper [options]"
+  exit
+end
+
+opts = {
+  :path => './'
+}
+
+OptionParser.new do |o|
+  o.banner = "USAGE: ios_mapper [options]"
+  
+  o.on("-p", "--path [PATH]", "Set the project install path") do |p|
+    opts[:path] = p
+  end
+
+  o.on("-h", "--help", "Show help documentation") do |h|
+    puts o
+    exit
+  end
+end.parse!
+
+$:.unshift(File.join(File.dirname(__FILE__), "/../lib"))
+require "ios_mapper"
+
+IosMapper::Mapper.init_project(ARGV.first, opts)

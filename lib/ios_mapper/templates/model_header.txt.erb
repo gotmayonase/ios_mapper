@@ -1,0 +1,26 @@
+//
+//  <%= @klass %>.h
+//  
+//
+//  Created by <%= @user_name %> on <%= Date.today.strftime('%m/%d/%Y') %>.
+//  Copyright (c) <%= Time.now.year %> Twin Engine Labs. All rights reserved.
+//
+
+#import <Foundation/Foundation.h>
+#import "RestKit.h"
+<% @associations.each do |a| %>
+<%= a.to_ios_import %> 
+<% end %>
+
+@interface <%= @klass %> : RKManagedObject {
+  
+}
+
+<% @properties.each do |property| %>
+<%= property.to_ios_property %> 
+<% end %>
+
++ (RKObjectMapping *)objectMapping;
++ (RKObjectMapping *)serializationMapping;
+
+@end
