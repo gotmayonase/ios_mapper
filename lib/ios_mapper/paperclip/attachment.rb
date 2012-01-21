@@ -3,13 +3,14 @@ module IosMapper
     
     def initialize(attachment)
       @attachment = attachment
+      @properties = [
+        Property.new('retain','NSData', "#{@attachment}_data"),
+        Property.new('retain','NSString',"#{@attachment}_url")
+      ]
     end
     
-    def to_property
-      <<-PROPERTY
-@property (nonatomic, retain) NSData *#{@attachment}_data;
-@property (nonatomic, retain) NSString *#{@attachment}_url;
-      PROPERTY
+    def to_ios_property
+      @properties.map(&:render_property).join("\n")
     end
     
     def synthesize_name
@@ -17,10 +18,7 @@ module IosMapper
     end
     
     def to_dealloc_line
-      <<-PROPERTY
-self.#{@attachment}_data = nil;
-self.#{@attachment}_url = nil;
-      PROPERTY
+      @properties.map(&:render_dealloc).join("\n")
     end
     
     def to_mapping_key
