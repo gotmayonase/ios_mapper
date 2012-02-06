@@ -1,7 +1,11 @@
 require 'erb'
 module IosMapper
   class Mapper
-  
+    MODEL_HEADER_TEMPLATE = File.read(File.expand_path(File.dirname(__FILE__)) + '/templates/model_header.txt.erb')
+    MODEL_IMPLEMENTATION_TEMPLATE = File.read(File.expand_path(File.dirname(__FILE__)) + '/templates/model_implementation.txt.erb')
+    SERVICE_HEADER_TEMPLATE = File.read(File.expand_path(File.dirname(__FILE__)) + '/templates/service_header.txt.erb')
+    SERVICE_IMPLEMENTATION_TEMPLATE = File.read(File.expand_path(File.dirname(__FILE__)) + '/templates/service_implementation.txt.erb')
+    
     def initialize(klass, user_name=`whoami`.chomp)
       @klass = klass
       @properties = _map_columns + _associations
@@ -15,22 +19,22 @@ module IosMapper
     end
   
     def to_model_header_file
-      erb = ERB.new(File.read(File.expand_path(__FILE__) + 'templates/model_header.txt.erb'), 0, '>')
+      erb = ERB.new(MODEL_HEADER_TEMPLATE, 0, '>')
       erb.result(binding)
     end
   
     def to_model_implementation_file
-      erb = ERB.new(File.read(File.expand_path(__FILE__) + 'templates/model_implementation.txt.erb'), 0, '>')
+      erb = ERB.new(MODEL_IMPLEMENTATION_TEMPLATE, 0, '>')
       erb.result(binding)
     end
     
     def to_service_header_file
-      erb = ERB.new(File.read(File.expand_path(__FILE__) + 'templates/service_header.txt.erb'), 0, '>')
+      erb = ERB.new(SERVICE_HEADER_TEMPLATE, 0, '>')
       erb.result(binding)
     end
   
     def to_service_implementation_file
-      erb = ERB.new(File.read(File.expand_path(__FILE__) + 'templates/service_implementation.txt.erb'), 0, '>')
+      erb = ERB.new(SERVICE_IMPLEMENTATION_TEMPLATE, 0, '>')
       erb.result(binding)
     end
 
@@ -62,6 +66,7 @@ module IosMapper
       end
 
       def _paperclip_attachments
+        return [] unless defined? Paperclip
         @klass.attachment_definitions ? @klass.attachment_definitions.keys.map { |a| Attachment.new(a) } : []
       end
       
